@@ -75,10 +75,9 @@ func (s *Snowflake) UnmarshalJSON(data []byte) error {
 			typ:   "int or string",
 		}
 	}
-	if err == nil {
-		*s = Snowflake(parsed)
-	}
-	return err
+
+	*s = Snowflake(parsed)
+	return nil
 }
 
 // MarshalJSON returns the JSON representation of s.
