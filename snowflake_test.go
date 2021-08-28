@@ -44,6 +44,17 @@ func TestSnowflake_UnmarshalJSONWithString(t *testing.T) {
 	fmt.Println(test.Snowflake)
 }
 
+func TestSnowflake_UnmarshalJSONWithEmptyString(t *testing.T) {
+	require := require.New(t)
+
+	raw, test := "{\"snowflake\": \"\"}", new(test)
+
+	err := json.Unmarshal([]byte(raw), &test)
+	require.NoError(err)
+
+	fmt.Println(test.Snowflake)
+}
+
 func TestSnowflake_UnmarshalJSONWithNonsense(t *testing.T) {
 	require := require.New(t)
 

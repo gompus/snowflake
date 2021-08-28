@@ -1,8 +1,6 @@
 package snowflake
 
 import (
-	"bytes"
-	"encoding/json"
 	"strconv"
 	"time"
 )
@@ -58,24 +56,25 @@ func (s Snowflake) Increment() int64 {
 
 // UnmarshalJSON unmarshals data into s.
 func (s *Snowflake) UnmarshalJSON(data []byte) error {
-	dec := json.NewDecoder(bytes.NewReader(data))
-	dec.UseNumber()
-
-	var raw json.Number
-	if err := dec.Decode(&raw); err != nil {
-		typeErr, ok := err.(*json.UnmarshalTypeError)
-		if ok {
-			return UnmarshalTypeError{
-				value:      typeErr.Value,
-				structName: typeErr.Struct,
-				field:      typeErr.Field,
-				typ:        "int or string",
-			}
-		}
-		return err
+	start, stop := 0, len(data)
+	if data[0] == '"' && data[len(data)-1] == '"' {
+		start++
+		stop--
 	}
 
-	parsed, err := raw.Int64()
+	raw := data[start:stop]
+	if len(raw) == 0 {
+		*s = 0
+		return nil
+	}
+
+	parsed, err := strconv.Atoi(string(raw))
+	if err != nil {
+		return UnmarshalTypeError{
+			value: string(data),
+			typ:   "int or string",
+		}
+	}
 	if err == nil {
 		*s = Snowflake(parsed)
 	}
