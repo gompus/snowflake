@@ -28,6 +28,15 @@ func Parse(s string) (Snowflake, error) {
 	return Snowflake(parsed), err
 }
 
+// MustParse is like Parse, but panics if it encounters an error.
+func MustParse(s string) Snowflake {
+	flake, err := Parse(s)
+	if err != nil {
+		panic(err)
+	}
+	return flake
+}
+
 // FromTimestamp generates a Snowflake for the given time.
 func FromTimestamp(time time.Time) Snowflake {
 	return Snowflake(time.UnixMilli()-discordEpoch) << 22
