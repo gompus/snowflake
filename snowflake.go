@@ -1,6 +1,8 @@
 package snowflake
 
 import (
+	"encoding/json"
+	"reflect"
 	"strconv"
 	"time"
 )
@@ -65,6 +67,10 @@ func (s Snowflake) Increment() int64 {
 
 // UnmarshalJSON unmarshals data into s.
 func (s *Snowflake) UnmarshalJSON(data []byte) error {
+	if !json.Valid(data) {
+		return &json.InvalidUnmarshalError{Type: reflect.TypeOf(s)}
+	}
+
 	start, stop := 0, len(data)
 	if data[0] == '"' && data[len(data)-1] == '"' {
 		start++
